@@ -1,0 +1,565 @@
+using System;
+using System.Data;
+using System.Data.SqlClient;
+using System.Collections;
+using System.Collections.Generic;
+using System.Text;
+
+
+public partial class StartTest : System.Web.UI.Page
+{
+    public static SqlConnection sqlconn;
+    protected string PostBackStr;
+    SqlDataReader dr;
+    int test_no,len,k;
+    DataRow dtr;
+    //static int counter = 10; 
+    int[] arr = new int[6];
+    long timerStartValue = 1800;
+    //long timerStartValue = 600;
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+       
+        sqlconn = new SqlConnection(ConfigurationManager.AppSettings["ConnectionString"].ToString());
+        int[] a = (int[])Session["values"];
+        if (!IsPostBack)
+        {
+            this.timerStartValue = long.Parse(ConfigurationManager.AppSettings["Delay"].ToString());
+            this.TimerInterval = 500;
+            Panel1.Visible = true;
+            loadquestion();
+            int i = Convert.ToInt32(Session["Counter"]);
+            if (i == 1)
+            {
+                btnprevious.Enabled = false;
+            }
+        }
+        
+    }
+
+
+    public void loadquestion()
+    {
+        //int score = Convert.ToInt32(txtScore.Text);
+        //lblScore.Text = "Score : " + Convert.ToString(score);
+        if (Convert.ToInt32(Session["Counter"]) <= 6)
+        {
+            //if (RblOption.SelectedIndex >= 0)
+            //{
+                test_no = Convert.ToInt32(Session["Test"]);
+                Session["seltestno"] = test_no;
+                int[] a = (int[])Session["values"];
+                //string str = "select * from Quest_Info,Test_Final where Test_Final.Q_id=Quest_Info.Quest_id and Test_Final.Q_id=" + a[Convert.ToInt32(Session["Counter"]) - 1] + " and Quest_Info.Test_id=" + test_no + " and Test_Final.Serial=" + test_no + " order by Test_Final.Q_id";
+                string str = "select * from Quest_Info,Test_Final where Test_Final.Q_id=Quest_Info.Quest_id and Test_Final.Q_id=" + a[Convert.ToInt32(Session["Counter"]) - 1] + " and Quest_Info.Test_id='1' and Test_Final.Serial='1' order by Test_Final.Q_id";
+    
+                SqlDataAdapter da2 = new SqlDataAdapter(str, sqlconn);
+                DataSet ds2 = new DataSet();
+                da2.Fill(ds2, "Result");
+                if (ds2.Tables[0].Rows.Count > 0)
+                {
+
+                    dtr = ds2.Tables[0].Rows[0];
+                    string question = dtr["Question"].ToString();
+                    string ch1 = dtr["choice1"].ToString();
+                    string ch2 = dtr["choice2"].ToString();
+                    string ch3 = dtr["choice3"].ToString();
+                    string ch4 = dtr["choice4"].ToString();
+                    string cans = dtr["correct"].ToString();
+                    //Response.Write(cans);
+                    Session["Answer"] = cans;
+                    Session["qid"] = dtr["Q_id"].ToString();
+                    display(question, ch1, ch2, ch3, ch4);
+                    //if (chkmark.Checked == true)
+                    //{
+                    //    Response.Write(a[Convert.ToInt32(Session["Counter"]) - 1]);
+                    //    //display(question, ch1, ch2, ch3, ch4);
+                    //}
+                    
+                }
+                //if (chkmark.Checked == true)
+                //{
+                //    Response.Write(a[Convert.ToInt32(Session["Counter"]) - 1]);
+                //    //display(question, ch1, ch2, ch3, ch4);
+                //}
+                
+            }
+            //else
+            //{
+            //    RegisterStartupScript("myAlert", "<script>alert('Please select the option')</script>");
+            //}
+
+            //for (int i = 0; i < 5; i++)
+            //{
+
+            //    //Response.Write(a[i]);
+            //}
+               
+           
+
+        
+        else
+        {
+            //code to insert answers in database to select that answers for particular question in review process
+            //int ans = Convert.ToInt32(Session["Answer"].ToString());
+            //int score = 0;
+            //if (ans == Convert.ToInt32(Session["rblsel"].ToString()))
+            //{
+            //    score = Convert.ToInt32(txtScore.Text) + 1;
+            //    txtScore.Text = score.ToString();
+            //    //lblScore.Text = "Score : " + Convert.ToString(score);
+            //    //Response.Write(lblScore.Text);
+               
+            //    //lblScore.Text = "Score : " + Convert.ToString(score);
+            //    Session["score"] = txtScore.Text;
+            //}
+
+           // Response.Redirect("Result.aspx");
+           // Response.Redirect("Review.aspx");
+
+            lblName.Visible = false;
+            lblQuestion.Visible = false;
+            RblOption.Visible = false;
+            btnnext.Visible = false;
+            btnprevious.Visible = false;
+            LinkButton1.Visible = true;
+            btnsubmit.Visible = false;
+            
+            //Code to insert the values
+            //int[] b = (int[])Session["values"];
+            //foreach (int g in b)
+            ////for (int g = 0; g < b.Length; g++)
+            //{
+            //SqlCommand cmd = new SqlCommand("INSERT INTO Sel_Ans VALUES ('1', @Quid, @Selected, @Score)", sqlconn);
+            ////cmd.Parameters.AddWithValue("@Tid", '1');
+            // //SqlParameter ID = cmd.Parameters.Add("@Tid", SqlDbType.Int, 50); Tid.Value = '1';
+
+            ////foreach (int g in b)
+            ////{
+            //    //cmd.Parameters.AddWithValue("@Quid", g);
+
+            //SqlParameter Quid = cmd.Parameters.Add("@Quid", SqlDbType.Int, 50);
+            //    Quid.Value = g;
+
+                
+            //SqlParameter Selected = cmd.Parameters.Add("@Selected", SqlDbType.Int, 50);
+            //int[] c = (int[])Session["arrofans"];
+
+            //foreach (int d in c)
+            //{
+
+            //    Selected.Value = d;
+            //}
+               
+            //    cmd.Parameters.AddWithValue("@Score", '1');
+
+            //    sqlconn.Open();
+            //    cmd.ExecuteNonQuery();
+            //    sqlconn.Close();
+            //}
+            
+           //cmd.Parameters.Add("@Quid",);
+          
+
+
+            //Response.Cache.SetExpires(DateTime.UtcNow.AddHours(-1));
+            //Response.Cache.SetNoStore();
+            Response.Cache.SetCacheability(HttpCacheability.NoCache);
+
+            //int[] a = (int[])Session["values"];
+            //int flag = 0;
+            //if (chkmark.Checked == true)
+            //{
+            //    flag = 1;
+            //    //Response.Write(a[Convert.ToInt32(Session["Counter"]) - 1]);
+            //}
+            //else
+            //{
+            //}
+
+            
+        }
+    }
+
+    public void display(string q, string a, string b, string c, string d)
+    {
+        
+        Panel1.Visible = true;
+        lblName.Text = "Name : " + Session["TName"];
+        int score = Convert.ToInt32(txtScore.Text);
+        lblScore.Text = "Score : " + Convert.ToString(score);
+        Session["score"] = lblScore.Text;
+        lblQuestion.Text = "Q." + Session["counter"].ToString() + "  " + q;
+        RblOption.ClearSelection();
+        RblOption.Items.Clear();
+        RblOption.Items.Add(a);
+        RblOption.Items.Add(b);
+        RblOption.Items.Add(c);
+        RblOption.Items.Add(d);
+        
+       
+    }
+
+    public void nextquestion()
+    {
+       
+            if (RblOption.SelectedIndex >= 0)
+            {
+               
+                Session["rblsel"] = RblOption.SelectedIndex + 1;              
+                int rb = RblOption.SelectedIndex + 1;
+                if (Session["Answer"].ToString() == rb.ToString())
+                {
+                    int score = Convert.ToInt32(txtScore.Text) + 1;
+                    txtScore.Text = score.ToString();
+                    lblScore.Text = "Score : " + Convert.ToString(score);
+                }
+                
+
+                int i = Convert.ToInt32(Session["Counter"]);
+                Session["Counter"] = ++i;
+                SqlCommand cmd = new SqlCommand("INSERT INTO Sel_Ans VALUES ('1', @Quid, @Selected, '@marks')", sqlconn);
+                SqlParameter Quid = cmd.Parameters.Add("@Quid", SqlDbType.Int, 50);
+                Quid.Value = Convert.ToInt32(Session["Counter"]);
+                
+                SqlParameter Selected = cmd.Parameters.Add("@Selected", SqlDbType.Int, 50);
+                Selected.Value = Session["rblsel"];
+                sqlconn.Open();
+                cmd.ExecuteNonQuery();
+                sqlconn.Close();
+
+                loadquestion();
+
+                //storeans();
+                
+            }
+            else
+            {
+                RegisterStartupScript("myAlert", "<script>alert('Please select the option')</script>");
+            }
+        }
+       
+            
+           
+    public void storeans()
+    {
+        ////////calculating array of answers selected i.e ansarray
+        //int rsel = Convert.ToInt32(Session["rblsel"]);
+        //int[] ansarray = new int[Convert.ToInt32(Session["Counter"]) - 1];
+        ////int[] ansarray = (int[])Session["arrofans"];
+        ////Array.Resize(ref ansarray, ansarray.Length + 1);
+        ////ansarray[ansarray.Length - 1] = rsel;
+        //int[] temp = (int[])Session["arrofans"];
+        //int j, n;
+
+        //if (temp == null)
+        //    n = 0;
+        //else
+        //    n = temp.Length;
+        //for (j = 0; j < n; j++)
+        //{
+        //    //ansarray[j] = Convert.ToInt32(Session["rblsel"].ToString());
+        //    ansarray[j] = temp[j];
+        //}
+        //ansarray[j] = rsel;
+        //for (int i = 0; i < ansarray.Length; i++)
+        //{
+        //    //Response.Write(ansarray[i]);
+        //    //int p = ansarray[0];
+        //    //int q = ansarray[1];
+        //    //int r = ansarray[2];
+        //    //Response.Write(p + " " + q);
+        //}
+
+        //Session["arrofans"] = ansarray;
+
+
+        //    //calculating array of checked values for question review chkarray
+
+
+             
+        //    int g;
+        //    if (chkmark.Checked == true)
+        //    {
+
+        //        g = 1;
+        //        int[] a = (int[])Session["values"];
+        //        //Response.Write(a[Convert.ToInt32(Session["Counter"]) - 1]);
+        //    }
+        //    else
+        //    {
+        //        g = 0;
+        //    }
+        //    //Response.Write(g);
+        //    //int chkvalue = Convert.ToInt32(Session["chksel"].ToString());
+        //    //Response.Write(chkvalue);
+        //    int[] chkarray = new int[Convert.ToInt32(Session["Counter"]) - 1];
+
+        //    int[] temp1 = (int[])Session["arrofchk"];
+        //    int k, no;
+
+        //    if (temp1 == null)
+        //        no = 0;
+        //    else
+        //        no = temp.Length;
+        //    for (k = 0; k < no; k++)
+        //    {
+        //   chkarray[k] = temp1[k];
+        //    }
+        //    chkarray[j] = g;
+        //    for (int i = 0; i < chkarray.Length; i++)
+        //    {
+        //        //int[] questionIDs = new int[10];
+        //        //Random randomIndex = new Random(DateTime.Now.Millisecond);
+        //        //int nextQuestion = questionIDs[randomIndex.Next(questionIDs.Length - 1)];
+        //       // int n = chkarray[(chkarray.Length) - 1];
+        //        int[] a = (int[])Session["values"];
+        //       // Response.Write(a[i]);
+        //        //int p = ansarray[0];
+        //        //int q = ansarray[1];
+        //        //int r = ansarray[2];
+        //        //Response.Write(p + " " + q);
+        //    }
+
+        //    Session["arrofchk"] = chkarray;
+
+
+        //    for (int i = 0; i < chkarray.Length; i++)
+        //    {
+        //        for (int b = 0; b < i; b++)
+        //        {
+        //            if (chkarray[i] == 1)
+        //            {
+        //                //Response.Write();
+        //            }
+        //            //{
+        //            //    int[] a = (int[])Session["values"];
+        //            // Response.Write(chkarray[i]);
+        //            //Response.Write(a[Convert.ToInt32(Session["Counter"]) - 1]);
+        //            //Response.Write(chkarray[i]);
+        //        }
+        //    }
+
+            }
+
+    void Page_PreRender(object sender, EventArgs e)
+    {
+        StringBuilder bldr = new StringBuilder();
+        bldr.AppendFormat("var Timer = new myTimer({0},{1},'{2}','timerData');", this.timerStartValue, this.TimerInterval, this.lblTimerCount.ClientID);
+        bldr.Append("Timer.go()");
+        ClientScript.RegisterStartupScript(this.GetType(), "TimerScript", bldr.ToString(), true);
+        ClientScript.RegisterHiddenField("timerData", timerStartValue.ToString());
+    }
+
+    void Page_PreInit(object sender, EventArgs e)
+    {
+        string timerVal = Request.Form["timerData"];
+        if (timerVal != null || timerVal == "")
+        {
+            timerVal = timerVal.Replace(",", String.Empty);
+            timerStartValue = long.Parse(timerVal);
+        }
+    }
+
+    private Int32 TimerInterval
+    {
+        get
+        {
+            object o = ViewState["timerInterval"];
+            if (o != null) { return Int32.Parse(o.ToString()); }
+            return 50;
+        }
+        set { ViewState["timerInterval"] = value; }
+
+    }
+    protected void btnnext_Click(object sender, EventArgs e)
+    {
+        //try
+        //{
+        
+            nextquestion();
+            selectans();
+            int i = Convert.ToInt32(Session["Counter"]);
+            int f = Convert.ToInt32(Session["rblsel"].ToString());
+            if (i > 1)
+            {
+                btnprevious.Enabled = true;
+                
+            }
+            //if (btnprevious.Enabled == true)
+            //{
+                //RblOption.SelectedIndex = f - 1;
+            //}
+        //}
+        //catch (Exception ex)
+        //{
+            //Response.Write("<script>alert(''" + ex.Message + "'')</script>");
+        //}
+    }
+
+
+    protected void btnprevious_Click(object sender, EventArgs e)
+    {
+        selectans();
+        int f = Convert.ToInt32(Session["rblsel"].ToString());
+        int i = Convert.ToInt32(Session["Counter"]);
+        Session["Counter"] = --i;
+        if (i > 0)
+        {
+            loadquestion();
+            //Session["arrofans"]
+            //int[] a = (int[])Session["arrofans"];
+            int[] b = (int[])Session["values"];
+            //foreach (int x in b)
+            //{
+            //    foreach (int z in a)
+            //    {
+            //        RblOption.SelectedIndex = z;
+            //    }
+            //}
+            //int[] s = (int[])Session["arrofans"];
+            ////int[] a = (int[])Session["Counter"];
+            foreach (int p in b)
+            {
+                RblOption.SelectedIndex = f - 1;
+            }
+            
+            ////for (int j = i; j < 5; j++)
+            ////{
+            //int p = Convert.ToInt32(Session["Counter"]);
+            //    Response.Write(s[p]);
+                
+            ////}
+
+           
+            ////{
+
+            //    RblOption.SelectedIndex = s[i];
+            ////}
+        }
+
+        else
+        {
+            RegisterStartupScript("myAlert", "<script>alert('No previous question')</script>");
+        }
+
+    }
+
+   
+  
+    #region Connection Open
+    public void ConnectionOpen()
+    {
+        try
+        {
+            if (sqlconn.State == ConnectionState.Closed) { sqlconn.Open(); }
+        }
+        catch (SqlException ex)
+        {
+
+        }
+        catch (SystemException sex)
+        {
+
+        }
+    }
+    #endregion
+    #region Connection Close
+    public void ConnectionClose()
+    {
+        try
+        {
+            if (sqlconn.State != ConnectionState.Closed) { sqlconn.Close(); }
+        }
+        catch (SqlException ex)
+        {
+
+        }
+        catch (SystemException sex)
+        {
+
+        }
+    }
+    #endregion
+
+
+
+
+    protected void LinkButton1_Click(object sender, EventArgs e)
+    {
+        Session["Counter"] = 1;
+        //test_no = Convert.ToInt32(Session["Test"]);
+        lblName.Visible = true;
+        lblQuestion.Visible = true;
+        RblOption.Visible = true;
+        btnnext.Visible = true;
+        btnprevious.Visible = false;
+        LinkButton1.Visible = false;
+        btnsubmit.Visible = false;
+
+
+        int[] b = (int[])Session["values"];
+        int f = Convert.ToInt32(Session["rblsel"].ToString());
+        //int t = Convert.ToInt32(Session["arrofans"].ToString());
+        int[] t = (int[])Session["arrofans"];
+        //foreach (int c in b)
+        //for (int c = 0; c < t.Length; c++)
+        //{
+        //    foreach (int a in b)
+        //    {
+                //RblOption.SelectedIndex = f;
+        //    }
+        //}
+
+
+       // int[] b = (int[])Session["values"];
+       //// int[] quest = new int[Convert.ToInt32(Session["Counter"]) - 1];
+       // for (int g = 0; g < quest.Length; g++)
+       // {
+       //     quest[g] = b[g];
+       //     Response.Write(quest[g]);
+       // }
+
+        LinkButton1.Enabled = false;
+        LinkButton1.Text = "You have finished test with" + " " + Session["score"].ToString();
+        lblTimerCount.Visible = false;
+        loadquestion();
+        selectans();
+    }
+
+    public void selectans()
+    {
+        int[] a = (int[])Session["values"];
+       // Session["Counter"] = 1;
+            string str = "select * from Sel_Ans where Quid=" + a[Convert.ToInt32(Session["Counter"]) - 1] + " and Tid='1'";
+            //string str = "select * from Sel_Ans where Quid=" + v + " and Tid='1'";
+
+            SqlDataAdapter da2 = new SqlDataAdapter(str, sqlconn);
+            DataSet ds2 = new DataSet();
+            da2.Fill(ds2, "Result");
+            if (ds2.Tables[0].Rows.Count > 0)
+            {
+
+                dtr = ds2.Tables[0].Rows[0];
+                string selected = dtr["Selected"].ToString();
+                Session["sel"] = selected;
+                Response.Write(selected);
+                RblOption.SelectedIndex = Convert.ToInt32(selected);
+                
+                //Response.Write(RblOption.SelectedIndex);
+            }
+        }
+                    
+    
+    protected void btnsubmit_Click(object sender, EventArgs e)
+    {
+        //if (Session["Answer"].ToString() == Session["rblsel"].ToString())
+        //{
+        //    int score = Convert.ToInt32(txtScore.Text) + 1;
+        //    txtScore.Text = score.ToString();
+        //    lblScore.Text = "Score : " + Convert.ToString(score);
+        //}
+        Response.Redirect("Result.aspx");
+
+    }
+}
