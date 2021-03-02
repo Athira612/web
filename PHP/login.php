@@ -1,13 +1,24 @@
 <html>
 <head>
-<title> LOGIN </title>
+<title>Login</title>
 </head>
 <body>
-<form method="post" action="login.php">
-<p>Username: <input type="text" name="username" /></p>
-<p>Password: <input type="text" name="password" /></p>
-<p>
-<input type ="Submit" name= "insert" value = "save">
-</form>
+<?php
+
+if ($_POST["username"] == "php" && $_POST["password"] == "php") {
+
+ session_start();
+ $_SESSION["Login"] = "YES";
+ echo "<h1>You are now logged correctly in</h1>";
+ echo "<p><a href='document.php'>Link to protected file</a><p/>";
+}
+else {
+
+ session_start();
+ $_SESSION["Login"] = "NO";
+ echo "<h1>You are NOT logged correctly in </h1>";
+ echo "<p><a href='document.php'>Link to protected file</a></p>";
+}
+?>
 </body>
 </html>
